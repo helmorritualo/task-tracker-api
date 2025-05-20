@@ -1,61 +1,77 @@
 import { Context, Next } from "hono";
 import { BadRequestError } from "@/utils/error";
+import { z } from "zod/v4";
+
+// zod Register schema
+export const registerSchema = z.object({
+  full_name: z.string({
+    message: "Full name is required",
+  }).min(1),
+
+  email: z.email({
+    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    message: "Invalid email format",
+  }),
+
+  username: z.string({
+    message: "Username is required",
+  }).min(5, {
+    message: "Username must be at least 5 characters long",
+  }),
+
+  password: z.string({
+    message: "Password is required",
+  })
+  .min(6, {
+    message: "Password must be at least 6 characters  long",
+  }),
+
+  gender: z.enum(["male", "female"]),
+});
+
+// zod Login schema
+export const loginSchema = z.object({
+  username: z.string({
+    message: "Username is required",
+  }),
+  password: z.string({
+    message: "Password is required",
+  }),
+});
 
 export const validateRegister = async (c: Context, next: Next) => {
   try {
-    const { full_name, email, username, password, gender } = await c.req.json();
+      const body = await c.req.json();
+      const validatedData = registerSchema.parse(body);
 
-    if (!full_name || !email || !username || !password || !gender) {
-      throw new BadRequestError("All fields are required");
+      c.set("validatedRegisterData", validatedData);
+
+      await next();
+    } catch (zodError) {
+      if (zodError instanceof z.ZodError) {
+        const errorMessages = zodError.issues
+          .map((issue) => `${issue.message}`)
+          .join(", ");
+        throw new BadRequestError(errorMessages);
+      }
+      throw new BadRequestError("Invalid request data");
     }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      throw new BadRequestError("Invalid email format");
-    }
-
-    if (username.length < 5) {
-      throw new BadRequestError("Username must be at least 5 characters long");
-    }
-
-    if (password.length < 6) {
-      throw new BadRequestError("Password must be at least 6 characters long");
-    }
-
-    c.set("validatedRegisterData", {
-      full_name,
-      email,
-      username,
-      password,
-      gender,
-    });
-
-    await next();
-  } catch (error) {
-    if (error instanceof BadRequestError) {
-      throw error;
-    }
-    throw new BadRequestError("Invalid request data");
-  }
 };
 
 export const validateLogin = async (c: Context, next: Next) => {
   try {
-    const { username, password } = await c.req.json();
+    const body = await c.req.json();
+    const validatedData = loginSchema.parse(body);
 
-    if (!username || !password) {
-      throw new BadRequestError("Username and Password are required");
-    }
-
-    c.set("validatedLoginData", {
-      username,
-      password,
-    });
+    c.set("validatedLoginData", validatedData);
 
     await next();
-  } catch (error) {
-    if (error instanceof BadRequestError) {
-      throw error;
+  } catch (zodError) {
+    if (zodError instanceof z.ZodError) {
+      const errorMessages = zodError.issues
+        .map((issue) => `${issue.message}`)
+        .join(", ");
+      throw new BadRequestError(errorMessages);
     }
     throw new BadRequestError("Invalid request data");
   }
