@@ -43,9 +43,6 @@ export const updateUserById = async (c: Context) => {
   try {
     const userId = c.get("user_id");
     const updatedData = c.get("validatedUserUpdateData");
-    if (!userId) {
-      throw new BadRequestError("User ID is required");
-    }
 
     const user = await User.findByIdAndUpdate(userId, updatedData, {
       new: true,
