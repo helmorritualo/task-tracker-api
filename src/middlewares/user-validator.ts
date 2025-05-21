@@ -15,12 +15,11 @@ export const userUpdateSchema = z.object({
       message: "Username must be at least 5 characters long",
     }).optional(),
 
-    gender: z.enum(["male", "female"]).refine(
-      (value) => ["male", "female"].includes(value),
-      {
-        message: "Gender must be one of: male and female"
-      }
-    ).optional(),
+    gender: z.string()
+      .refine((value) => ["male", "female"].includes(value), {
+        message: "Gender must be male and female"
+      })
+      .optional(),
   })
 
   // Ensure at least one field is provided

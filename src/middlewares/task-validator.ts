@@ -11,25 +11,32 @@ export const taskSchema = z.object({
     message: "Description is required",
   }),
 
-  status: z.enum(["pending", "in-progress", "completed"]).refine(
-    (value) => ["pending", "in-progress", "completed"].includes(value), {
-     message: "Status must be one of: pending, in-progress, completed",
-  }),
+  status: z
+    .string()
+    .refine(
+      (value) => ["pending", "in-progress", "completed"].includes(value),
+      {
+        message: "Status must be one of: pending, in-progress, completed",
+      }
+    ),
 
-  priority: z.enum(["low", "medium", "high"]).refine(
-    (value) => ["low", "medium", "high"].includes(value), {
-     message: "Priority must be one of: low, medium, high",
-  }),
+  priority: z
+    .string()
+    .refine((value) => ["low", "medium", "high"].includes(value), {
+      message: "Priority must be one of: low, medium, high",
+    }),
 
-  category: z.enum(["personal", "work", "urgent"]).refine(
-    (value) => ["personal", "work", "urgent"].includes(value), {
-     message: "Category must be one of: personal, work, urgent",
-  }),
-
-  due_date: z.date({ message: "Due date is required" }).refine(
-     (date) => date > new Date(), {
-     message: "Due date must be in the future",
-  }),
+  category: z
+    .string()
+    .refine((value) => ["work", "personal", "other"].includes(value), {
+      message: "Category must be one of: work, personal, other",
+    }),
+  due_date: z
+    .string({ message: "Due date is required" })
+    .transform((str) => new Date(str))
+    .refine((date) => date > new Date(), {
+      message: "Due date must be in the future",
+    }),
 });
 
 const updateTaskSchema = taskSchema.partial();
@@ -69,4 +76,3 @@ export const validateUpdateTask = async (c: Context, next: Next) => {
     }
   }
 };
-

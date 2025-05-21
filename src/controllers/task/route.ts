@@ -14,13 +14,13 @@ import { validateTask, validateUpdateTask } from "@/middlewares/task-validator";
 
 const taskRouter = new Hono();
 
-taskRouter.get("/task", authenticate, getAllTasks);
-taskRouter.get("/task/category", authenticate, getTaskByCategory);
-taskRouter.get("/task/status", authenticate, getTaskByStatus);
-taskRouter.get("/task/priority", authenticate, getTaskByPriority);
-taskRouter.get("/task/:id", authenticate, getTaskById);
-taskRouter.post("/task", authenticate, validateTask, createTask);
-taskRouter.put("/task/:id", authenticate, validateUpdateTask, updateTask);
-taskRouter.delete("/task/:id", authenticate, deleteTask);
+taskRouter.get("/tasks", authenticate, getAllTasks);
+taskRouter.get("/tasks/category", authenticate, getTaskByCategory);
+taskRouter.get("/tasks/status", authenticate, getTaskByStatus);
+taskRouter.get("/tasks/priority", authenticate, getTaskByPriority);
+taskRouter.get("/tasks/:id", authenticate, getTaskById);
+taskRouter.post("/tasks", authenticate, validateTask, createTask);
+taskRouter.put("/tasks/:id", authenticate, validateUpdateTask, updateTask);
+taskRouter.delete("/tasks/:id", authenticate, deleteTask);
 
 export default taskRouter;

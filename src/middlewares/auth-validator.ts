@@ -26,7 +26,9 @@ export const registerSchema = z.object({
     message: "Password must be at least 6 characters  long",
   }),
 
-  gender: z.enum(["male", "female"]),
+  gender: z.string().refine((value) => ["male", "female"].includes(value), {
+    message: "Gender must be male and female"
+  })
 });
 
 // zod Login schema

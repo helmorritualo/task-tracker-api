@@ -12,8 +12,8 @@ import authenticate from "@/middlewares/authentication";
 
 const userRouter = new Hono();
 
-userRouter.get("/user", authenticate, getUserById);
-userRouter.put("/user", authenticate, validateUserUpdate, updateUserById);
+userRouter.get("/users", authenticate, getUserById);
+userRouter.put("/users", authenticate, validateUserUpdate, updateUserById);
 userRouter.patch(
   "/user/password",
   authenticate,

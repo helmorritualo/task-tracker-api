@@ -11,11 +11,16 @@ export const getAllTasks = async (c: Context) => {
 
     const tasks = await Task.find({ assigned_to: userId });
 
+    const tasksWithoutAssignedTo = tasks.map((task) => {
+      const { assigned_to, ...taskData } = task.toObject();
+      return taskData;
+    });
+
     return c.json(
       {
         success: true,
         message: "Tasks retrieved successfully",
-        data: tasks,
+        data: tasksWithoutAssignedTo,
       },
       200
     );
@@ -41,11 +46,16 @@ export const getTaskByCategory = async (c: Context) => {
       category: category,
     });
 
+    const tasksWithoutAssignedTo = tasks.map((task) => {
+      const { assigned_to, ...taskData } = task.toObject();
+      return taskData;
+    });
+
     return c.json(
       {
         success: true,
         message: "Tasks by Category retrieved successfully",
-        data: tasks,
+        data: tasksWithoutAssignedTo,
       },
       200
     );
@@ -71,11 +81,16 @@ export const getTaskByStatus = async (c: Context) => {
       status: status,
     });
 
+    const tasksWithoutAssignedTo = tasks.map((task) => {
+      const { assigned_to, ...taskData } = task.toObject();
+      return taskData;
+    });
+
     return c.json(
       {
         success: true,
         message: "Tasks by Status retrieved successfully",
-        data: tasks,
+        data: tasksWithoutAssignedTo,
       },
       200
     );
@@ -101,11 +116,15 @@ export const getTaskByPriority = async (c: Context) => {
       priority: priority,
     });
 
+    const tasksWithoutAssignedTo = tasks.map((task) => {
+      const { assigned_to, ...taskData } = task.toObject();
+      return taskData;
+    });
     return c.json(
       {
         success: true,
         message: "Tasks by Priority retrieved successfully",
-        data: tasks,
+        data: tasksWithoutAssignedTo,
       },
       200
     );
@@ -135,11 +154,13 @@ export const getTaskById = async (c: Context) => {
       throw new NotFoundError("Task not found");
     }
 
+    const { assigned_to, ...taskData } = task.toObject();
+
     return c.json(
       {
         success: true,
         message: "Task retrieved successfully",
-        data: task,
+        data: taskData,
       },
       200
     );
@@ -154,7 +175,8 @@ export const getTaskById = async (c: Context) => {
 export const createTask = async (c: Context) => {
   try {
     const userId = c.get("user_id");
-    const { title, description, status, priority, category, due_date } = await c.get("validatedTaskData");
+    const { title, description, status, priority, category, due_date } =
+      await c.get("validatedTaskData");
 
     const task = new Task({
       title,
@@ -168,11 +190,14 @@ export const createTask = async (c: Context) => {
 
     await task.save();
 
+    // remove the assigned_to field from the response
+    const { assigned_to, ...taskData } = task.toObject();
+
     return c.json(
       {
         success: true,
         message: "Task created successfully",
-        data: task,
+        data: taskData,
       },
       201
     );
@@ -213,11 +238,13 @@ export const updateTask = async (c: Context) => {
       throw new NotFoundError("Task not found");
     }
 
+    const { assigned_to, ...taskData } = task.toObject();
+
     return c.json(
       {
         success: true,
         message: "Task updated successfully",
-        data: task,
+        data: taskData,
       },
       200
     );
@@ -250,8 +277,7 @@ export const deleteTask = async (c: Context) => {
     return c.json(
       {
         success: true,
-        message: "Task deleted successfully",
-        data: null,
+        message: "Task deleted successfully"
       },
       200
     );
