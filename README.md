@@ -1,6 +1,6 @@
 # Task Tracker API
 
-A robust RESTful API for task management built with TypeScript, Hono, and MongoDB.
+A RESTful API for task management built with TypeScript, Hono, and MongoDB.
 
 ## Features
 
