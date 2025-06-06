@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { jwt } from "hono/jwt";
 import { cors } from "hono/cors";
-import type { JwtVariables } from 'hono/jwt'
+import type { JwtVariables } from "hono/jwt";
 import { Context, Next } from "hono";
 import { secureHeaders } from "hono/secure-headers";
 import { PORT } from "./config/env";
@@ -14,17 +14,20 @@ import { routes } from "./controllers/routes";
 const app = new Hono<{ Variables: JwtVariables }>();
 app.use(secureHeaders());
 app.use("*", logger());
-app.use("*", cors({
-  origin: ["*"],
-  allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowHeaders: ["Content-Type", "Authorization"],
-  exposeHeaders: ["Content-Length", "X-Kuma-Revision"],
-  credentials: true,
-  maxAge: 600
-}));
+app.use(
+  "*",
+  cors({
+    origin: ["*"],
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    exposeHeaders: ["Content-Length", "X-Kuma-Revision"],
+    credentials: true,
+    maxAge: 600,
+  }),
+);
 
 routes.forEach((route) => {
-  app.route("/api/v1/", route)
+  app.route("/api/v1/", route);
 });
 
 app.use("/api/v1/*", async (c: Context, next: Next) => {
@@ -49,5 +52,3 @@ serve({ fetch: app.fetch, port }, async (info) => {
 
   await connectionToDatabase();
 });
-
-
